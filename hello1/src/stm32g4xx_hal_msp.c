@@ -47,8 +47,6 @@
  */
 void HAL_MspInit(void)
 {
-	BSP_LED_Init(LED2);
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
 }
 
 /**
@@ -58,8 +56,6 @@ void HAL_MspInit(void)
  */
 void HAL_MspDeInit(void)
 {
-	BSP_LED_DeInit(LED2);
-	BSP_PB_DeInit(BUTTON_USER);
 }
 
 /**
