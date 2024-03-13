@@ -153,6 +153,16 @@ void SysTick_Handler(void)
 }*/
 
 /**
+ * @brief  This function handles External lines 10_15 interrupt request.
+ * @param  None
+ * @retval None
+ */
+void EXTI15_10_IRQHandler(void)
+{
+	BSP_PB_IRQHandler(BUTTON_USER);
+}
+
+/**
  * @}
  */
 
