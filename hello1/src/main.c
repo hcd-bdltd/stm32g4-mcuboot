@@ -72,9 +72,8 @@ int main(void)
 
 	printf("Hello, World!\r\n");
 
-	/* Infinite loop */
-	while (1)
-		;
+	Error_Handler();
+	return 0;
 }
 
 /**
@@ -146,6 +145,33 @@ void BSP_PB_Callback(Button_TypeDef Button)
 	/* This function should be implemented by the user application.
 	   It is called into this driver when an event on Button is triggered. */
 	BSP_LED_Toggle(LED2);
+}
+
+void Error_Handler(void)
+{
+	const char *SOS_PATTERN = "...---...";
+	const int DOT_DURATION = 100;
+	const int DASH_DURATION = 3 * DOT_DURATION;
+	const int PAUSE_DURATION = 3 * DOT_DURATION;
+	const int WORD_PAUSE_DURATION = 7 * DOT_DURATION;
+
+	while (1) {
+		const char *c = SOS_PATTERN;
+		BSP_LED_Off(LED2);
+		while (*c) {
+			if (*c == '.') {
+				BSP_LED_On(LED2);
+				HAL_Delay(DOT_DURATION);
+			} else if (*c == '-') {
+				BSP_LED_On(LED2);
+				HAL_Delay(DASH_DURATION);
+			}
+			BSP_LED_Off(LED2);
+			HAL_Delay(PAUSE_DURATION);
+			c++;
+		}
+		HAL_Delay(WORD_PAUSE_DURATION);
+	}
 }
 
 #ifdef USE_FULL_ASSERT
