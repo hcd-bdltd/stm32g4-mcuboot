@@ -62,10 +62,8 @@ int main(void)
 	 */
 
 	/* Infinite loop */
-	while (1) {
-		BSP_LED_Toggle(LED2);
-		HAL_Delay(100);
-	}
+	while (1)
+		;
 }
 
 /**
@@ -127,6 +125,16 @@ static void SystemClock_Config(void)
 		while (1)
 			;
 	}
+}
+
+void BSP_PB_Callback(Button_TypeDef Button)
+{
+	/* Prevent unused argument(s) compilation warning */
+	UNUSED(Button);
+
+	/* This function should be implemented by the user application.
+	   It is called into this driver when an event on Button is triggered. */
+	BSP_LED_Toggle(LED2);
 }
 
 #ifdef USE_FULL_ASSERT

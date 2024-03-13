@@ -108,10 +108,10 @@
 #define VECT_TAB_OFFSET                                                                            \
 	0x00UL /*!< Vector Table base offset field.                                                \
 		  This value must be a multiple of 0x200. */
-	       /******************************************************************************/
-	       /**
-		* @}
-		*/
+/******************************************************************************/
+/**
+ * @}
+ */
 
 /** @addtogroup STM32G4xx_System_Private_Macros
  * @{
