@@ -58,8 +58,19 @@ int main(void)
 	/* Configure the System clock to have a frequency of 170 MHz */
 	SystemClock_Config();
 
-	/* Add your application code here
-	 */
+	/* Add your application code here */
+	COM_InitTypeDef COM_Init = {
+		.BaudRate = 115200,
+		.WordLength = COM_WORDLENGTH_8B,
+		.StopBits = COM_STOPBITS_1,
+		.Parity = COM_PARITY_NONE,
+		.HwFlowCtl = COM_HWCONTROL_NONE,
+	};
+	BSP_COM_Init(COM1, &COM_Init);
+	BSP_LED_Init(LED2);
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
+
+	printf("Hello, World!\r\n");
 
 	/* Infinite loop */
 	while (1)

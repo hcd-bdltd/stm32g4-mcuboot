@@ -38,6 +38,8 @@ CC_SRCS := \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr_ex.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_rcc.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_rcc_ex.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_uart.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_uart_ex.c \
 	$(SRC_DIR)/gcc/syscalls.c \
 	$(SRC_DIR)/gcc/sysmem.c \
 	$(SRC_DIR)/gcc/system_stm32g4xx.c \
