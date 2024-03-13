@@ -98,7 +98,7 @@ $(CC_OBJS): %.o: %.c | $(OUT_DIR)
 	@$(CC) $(CC_FLAGS) -MMD -MP -MF"$(OUT_DIR)/$(@F:%.o=%.d)" -MT"$@" -c $< -o $(OUT_DIR)/$(@F)
 
 $(OUT_DIR):
-	@echo "MKDIR [$(OUT_DIR)]"
+	@echo "MD [$(OUT_DIR)]"
 	@mkdir -p $(OUT_DIR)
 
 .PHONY: clean
