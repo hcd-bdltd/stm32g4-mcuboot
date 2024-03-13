@@ -29,8 +29,10 @@ LD_SRCS := $(SRC_DIR)/gcc/STM32G431RBTX_FLASH.ld
 AS_SRCS := $(SRC_DIR)/gcc/startup_stm32g431rbtx.s
 
 CC_SRCS := \
+	$(BSP_DIR)/stm32g4xx_nucleo.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_cortex.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_gpio.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr_ex.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_rcc.c \
