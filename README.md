@@ -12,13 +12,15 @@ git submodule update --init --recursive
 
 ## Usage
 
+The hardware used in this project is the [NUCLEO-G431RB](https://www.st.com/en/evaluation-tools/nucleo-g431rb.html) development board.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## Other
 
-By replacing the hardware specific files in the `lib/src` directory, this project can be used with other microcontrollers.
+By replacing the hardware specific files, this project can be used with other microcontrollers.
 
 ## Licenses
 
