@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eu -o pipefail
+
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <project_name>"
     exit 1
