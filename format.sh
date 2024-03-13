@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux -o pipefail
 
-clang-format -i lib/**.c lib/**.h
-clang-format -i boot/**.c boot/**.h
-clang-format -i hello1/**.c hello1/**.h
-clang-format -i hello2/**.c hello2/**.h
+find lib \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
+find boot \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
+find hello1 \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
+find hello2 \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +
