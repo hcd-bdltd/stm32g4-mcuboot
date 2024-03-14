@@ -17,30 +17,60 @@ OC := $(PREFIX)objcopy
 OUT_DIR := out
 SRC_DIR := src
 INC_DIR := inc
-LIB_DIR := ../lib
 EXT_DIR := ../ext
 
 BSP_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/BSP/STM32G4xx_Nucleo
 CMSIS_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/CMSIS
 HAL_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/STM32G4xx_HAL_Driver
+MCUBOOT_DIR := $(EXT_DIR)/mcuboot
 
 LD_SRCS := $(SRC_DIR)/gcc/STM32G431RBTX_FLASH.ld
 
 AS_SRCS := $(SRC_DIR)/gcc/startup_stm32g431rbtx.s
 
-CC_SRCS := \
+MCUBOOT_SRCS := \
+	$(MCUBOOT_DIR)/boot/bootutil/src/boot_record.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/bootutil_misc.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/bootutil_public.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/caps.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/encrypted.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/fault_injection_hardening_delay_rng_mbedtls.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/fault_injection_hardening.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/image_ecdsa.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/image_ed25519.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/image_rsa.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/image_validate.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/loader.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/swap_misc.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/swap_move.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/swap_scratch.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/tlv.c \
+
+TINYCRYPT_SRCS := \
+
+STM32_SRCS := \
+	$(BSP_DIR)/stm32g4xx_nucleo.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_cortex.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_exti.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_gpio.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr_ex.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_rcc.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_rcc_ex.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_uart.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_uart_ex.c \
 	$(SRC_DIR)/gcc/syscalls.c \
 	$(SRC_DIR)/gcc/sysmem.c \
 	$(SRC_DIR)/gcc/system_stm32g4xx.c \
-	$(SRC_DIR)/main.c \
 	$(SRC_DIR)/stm32g4xx_hal_msp.c \
 	$(SRC_DIR)/stm32g4xx_it.c \
+
+CC_SRCS := \
+	$(MCUBOOT_SRCS) \
+	$(TINYCRYPT_SRCS) \
+	$(STM32_SRCS) \
+	$(SRC_DIR)/main.c \
 
 INCS := \
 	"-I$(BSP_DIR)" \
@@ -49,6 +79,8 @@ INCS := \
 	"-I$(HAL_DIR)/Inc" \
 	"-I$(HAL_DIR)/Inc/Legacy" \
 	"-I$(INC_DIR)" \
+	"-I$(MCUBOOT_DIR)/boot/bootutil/include" \
+	"-I$(MCUBOOT_DIR)/ext/tinycrypt/lib/include" \
 
 DEFS := \
 	-DNDEBUG \
@@ -59,7 +91,7 @@ DEFS := \
 STD_FLAGS := -std=gnu11
 STD_FLAGS += -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
 STD_FLAGS += -ffunction-sections -fdata-sections -fstack-usage
-WRN_FLAGS := -Wall -Wextra -Werror
+WRN_FLAGS := -Wall -Wextra
 OPT_FLAGS := -Og -g3
 
 AS_FLAGS := $(STD_FLAGS) $(OPT_FLAGS)
