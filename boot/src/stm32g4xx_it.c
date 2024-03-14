@@ -59,8 +59,7 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
 	/* Go to infinite loop when Hard Fault exception occurs */
-	while (1) {
-	}
+	Error_Handler();
 }
 
 /**
@@ -71,8 +70,7 @@ void HardFault_Handler(void)
 void MemManage_Handler(void)
 {
 	/* Go to infinite loop when Memory Manage exception occurs */
-	while (1) {
-	}
+	Error_Handler();
 }
 
 /**
@@ -83,8 +81,7 @@ void MemManage_Handler(void)
 void BusFault_Handler(void)
 {
 	/* Go to infinite loop when Bus Fault exception occurs */
-	while (1) {
-	}
+	Error_Handler();
 }
 
 /**
@@ -95,8 +92,7 @@ void BusFault_Handler(void)
 void UsageFault_Handler(void)
 {
 	/* Go to infinite loop when Usage Fault exception occurs */
-	while (1) {
-	}
+	Error_Handler();
 }
 
 /**
@@ -151,6 +147,16 @@ void SysTick_Handler(void)
 /*void PPP_IRQHandler(void)
 {
 }*/
+
+/**
+ * @brief  This function handles External lines 10_15 interrupt request.
+ * @param  None
+ * @retval None
+ */
+void EXTI15_10_IRQHandler(void)
+{
+	BSP_PB_IRQHandler(BUTTON_USER);
+}
 
 /**
  * @}

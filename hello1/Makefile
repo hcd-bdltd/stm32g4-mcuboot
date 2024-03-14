@@ -17,7 +17,6 @@ OC := $(PREFIX)objcopy
 OUT_DIR := out
 SRC_DIR := src
 INC_DIR := inc
-LIB_DIR := ../lib
 EXT_DIR := ../ext
 
 BSP_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/BSP/STM32G4xx_Nucleo

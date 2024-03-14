@@ -18,6 +18,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
+#include "stm32g4xx_nucleo.h"
 
 /** @addtogroup STM32G4xx_HAL_Driver
  * @{
@@ -46,6 +47,7 @@
  */
 void HAL_MspInit(void)
 {
+	// Empty
 }
 
 /**
@@ -55,6 +57,7 @@ void HAL_MspInit(void)
  */
 void HAL_MspDeInit(void)
 {
+	// Empty
 }
 
 /**
