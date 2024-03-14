@@ -47,8 +47,8 @@ int main(void)
 		Error_Handler();
 	}
 
-	BOOT_LOG_INF("Bootloader chainload address offset: 0x%x", (int)rsp.br_image_off);
 	BOOT_LOG_INF("Jumping to the first image slot");
+	BOOT_LOG_INF("Bootloader chainload address offset: 0x%x", (int)rsp.br_image_off);
 
 	// De-initialize the system (clocks, peripherals, etc.)
 	// No more logging or blinking LEDs after this point
