@@ -1,6 +1,6 @@
-[submodule "ext/STM32CubeG4"]
-	path = ext/STM32CubeG4
+[submodule "lib/STM32CubeG4"]
+	path = lib/STM32CubeG4
 	url = git@github.com:STMicroelectronics/STM32CubeG4.git
-[submodule "ext/mcuboot"]
-	path = ext/mcuboot
+[submodule "lib/mcuboot"]
+	path = lib/mcuboot
 	url = git@github.com:mcu-tools/mcuboot.git
