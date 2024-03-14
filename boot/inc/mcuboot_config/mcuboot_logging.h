@@ -38,7 +38,7 @@
 #if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_ERROR
 #define MCUBOOT_LOG_ERR(_fmt, ...)                                                                 \
 	do {                                                                                       \
-		fprintf(stderr, "[ERR] " _fmt "\n", ##__VA_ARGS__);                                \
+		fprintf(stderr, "[ERR] " _fmt "\r\n", ##__VA_ARGS__);                              \
 		fflush(stderr);                                                                    \
 	} while (0)
 #else
@@ -48,7 +48,7 @@
 #if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_WARNING
 #define MCUBOOT_LOG_WRN(_fmt, ...)                                                                 \
 	do {                                                                                       \
-		fprintf(stderr, "[WRN] " _fmt "\n", ##__VA_ARGS__);                                \
+		fprintf(stderr, "[WRN] " _fmt "\r\n", ##__VA_ARGS__);                              \
 		fflush(stderr);                                                                    \
 	} while (0)
 #else
@@ -58,7 +58,7 @@
 #if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_INFO
 #define MCUBOOT_LOG_INF(_fmt, ...)                                                                 \
 	do {                                                                                       \
-		fprintf(stderr, "[INF] " _fmt "\n", ##__VA_ARGS__);                                \
+		fprintf(stderr, "[INF] " _fmt "\r\n", ##__VA_ARGS__);                              \
 		fflush(stderr);                                                                    \
 	} while (0)
 #else
@@ -68,7 +68,7 @@
 #if MCUBOOT_LOG_LEVEL >= MCUBOOT_LOG_LEVEL_DEBUG
 #define MCUBOOT_LOG_DBG(_fmt, ...)                                                                 \
 	do {                                                                                       \
-		fprintf(stderr, "[DBG] " _fmt "\n", ##__VA_ARGS__);                                \
+		fprintf(stderr, "[DBG] " _fmt "\r\n", ##__VA_ARGS__);                              \
 		fflush(stderr);                                                                    \
 	} while (0)
 #else
