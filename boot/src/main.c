@@ -1,64 +1,72 @@
 /**
- ******************************************************************************
- * @file    Templates/Src/main.c
- * @author  MCD Application Team
- * @brief   Main program body
- ******************************************************************************
- * @attention
+ * @file main.c
+ * @author B Duncan LTD (info@bduncanltd.com)
+ * @brief Entry point for the bootloader
+ * @version 0.1
+ * @date 2024-03-14
  *
- * Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.
+ * @copyright Copyright (c) 2024
  *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
  */
 
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32G4xx_HAL_Examples
- * @{
- */
+#include "bootutil/bootutil.h"
+#include "bootutil/bootutil_log.h"
+#include "bootutil/fault_injection_hardening.h"
+#include "bootutil/image.h"
 
-/** @addtogroup Templates
- * @{
- */
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
+static void Init(void);
 static void SystemClock_Config(void);
+static void DeInit(void);
+static void boot_jump(struct boot_rsp *rsp);
 
-/* Private functions ---------------------------------------------------------*/
-
-/**
- * @brief  Main program
- * @param  None
- * @retval None
- */
 int main(void)
 {
+	// Initialize the system (clocks, peripherals, etc.)
+	Init();
 
-	/* STM32G4xx HAL library initialization:
-	     - Configure the Flash prefetch, Flash preread and Buffer caches
-	     - Systick timer is configured by default as source of time base, but user
-		   can eventually implement his proper time base source (a general purpose
-		   timer for example or other time source), keeping in mind that Time base
-		   duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
-		   handled in milliseconds basis.
-	     - Low Level Initialization
-	   */
+	// Blink 10 times to indicate bootloader is running
+	for (int i = 0; i < 10; i++) {
+		BSP_LED_On(LED2);
+		HAL_Delay(50);
+		BSP_LED_Off(LED2);
+		HAL_Delay(50);
+	}
+
+	/* MCUboot's boot_go validates and checks all images for update and returns
+	 * the load information for booting the main image
+	 */
+	BOOT_LOG_INF("Starting bootloader");
+	struct boot_rsp rsp;
+
+	FIH_DECLARE(fih_rc, FIH_FAILURE);
+	FIH_CALL(boot_go, fih_rc, &rsp);
+	if (FIH_NOT_EQ(fih_rc, FIH_SUCCESS)) {
+		BOOT_LOG_ERR("Unable to find bootable image");
+		Error_Handler();
+	}
+
+	BOOT_LOG_INF("Bootloader chainload address offset: 0x%x", (int)rsp.br_image_off);
+	BOOT_LOG_INF("Jumping to the first image slot");
+
+	// De-initialize the system (clocks, peripherals, etc.)
+	// No more logging or blinking LEDs after this point
+	DeInit();
+
+	// Jump to the application
+	boot_jump(&rsp);
+
+	// Should never get here
+	FIH_PANIC;
+	return 0;
+}
+
+static void Init(void)
+{
 	HAL_Init();
-
-	/* Configure the System clock to have a frequency of 170 MHz */
 	SystemClock_Config();
 
-	/* Add your application code here */
 	COM_InitTypeDef COM_Init = {
 		.BaudRate = 115200,
 		.WordLength = COM_WORDLENGTH_8B,
@@ -68,31 +76,8 @@ int main(void)
 	};
 	BSP_COM_Init(COM1, &COM_Init);
 	BSP_LED_Init(LED2);
-	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
-
-	Error_Handler();
-	return 0;
 }
 
-/**
- * @brief  System Clock Configuration
- *         The system Clock is configured as follow :
- *            System Clock source            = PLL (HSI)
- *            SYSCLK(Hz)                     = 170000000
- *            HCLK(Hz)                       = 170000000
- *            AHB Prescaler                  = 1
- *            APB1 Prescaler                 = 1
- *            APB2 Prescaler                 = 1
- *            HSI Frequency(Hz)              = 16000000
- *            PLL_M                          = 4
- *            PLL_N                          = 85
- *            PLL_P                          = 2
- *            PLL_Q                          = 2
- *            PLL_R                          = 2
- *            Flash Latency(WS)              = 8
- * @param  None
- * @retval None
- */
 static void SystemClock_Config(void)
 {
 	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
@@ -135,14 +120,23 @@ static void SystemClock_Config(void)
 	}
 }
 
-void BSP_PB_Callback(Button_TypeDef Button)
+static void DeInit(void)
 {
-	/* Prevent unused argument(s) compilation warning */
-	UNUSED(Button);
+	BSP_LED_DeInit(LED2);
+	BSP_COM_DeInit(COM1);
 
-	/* This function should be implemented by the user application.
-	   It is called into this driver when an event on Button is triggered. */
-	BSP_LED_Toggle(LED2);
+	HAL_RCC_DeInit();
+	HAL_DeInit();
+}
+
+static void boot_jump(struct boot_rsp *rsp)
+{
+	uintptr_t flash_base = FLASH_BASE;
+	void *start = (void *)(flash_base + rsp->br_image_off + rsp->br_hdr->ih_hdr_size);
+
+	/* Lock interrupts and dive into the entry point */
+	__disable_irq();
+	((void (*)(void))start)();
 }
 
 void Error_Handler(void)
@@ -171,31 +165,3 @@ void Error_Handler(void)
 		HAL_Delay(WORD_PAUSE_DURATION);
 	}
 }
-
-#ifdef USE_FULL_ASSERT
-
-/**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-	/* User can add his own implementation to report the file name and line number,
-	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-	/* Infinite loop */
-	while (1) {
-	}
-}
-#endif
-
-/**
- * @}
- */
-
-/**
- * @}
- */

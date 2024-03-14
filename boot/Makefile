@@ -34,8 +34,8 @@ MCUBOOT_SRCS := \
 	$(MCUBOOT_DIR)/boot/bootutil/src/bootutil_public.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/caps.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/encrypted.c \
-	$(MCUBOOT_DIR)/boot/bootutil/src/fault_injection_hardening_delay_rng_mbedtls.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/fault_injection_hardening.c \
+	$(MCUBOOT_DIR)/boot/bootutil/src/fault_injection_hardening_delay_rng_mbedtls.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/image_ecdsa.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/image_ed25519.c \
 	$(MCUBOOT_DIR)/boot/bootutil/src/image_rsa.c \
@@ -47,6 +47,23 @@ MCUBOOT_SRCS := \
 	$(MCUBOOT_DIR)/boot/bootutil/src/tlv.c \
 
 TINYCRYPT_SRCS := \
+	$(MCUBOOT_DIR)/ext/mbedtls-asn1/src/asn1parse.c \
+	$(MCUBOOT_DIR)/ext/mbedtls-asn1/src/platform_util.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/aes_decrypt.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/aes_encrypt.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/cbc_mode.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ccm_mode.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/cmac_mode.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ctr_mode.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ctr_prng.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ecc.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ecc_dh.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ecc_dsa.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/ecc_platform_specific.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/hmac.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/hmac_prng.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/sha256.c \
+	$(MCUBOOT_DIR)/ext/tinycrypt/lib/source/utils.c \
 
 STM32_SRCS := \
 	$(BSP_DIR)/stm32g4xx_nucleo.c \
@@ -70,6 +87,7 @@ CC_SRCS := \
 	$(MCUBOOT_SRCS) \
 	$(TINYCRYPT_SRCS) \
 	$(STM32_SRCS) \
+	$(SRC_DIR)/flash_map_backend/flash_map_backend.c \
 	$(SRC_DIR)/main.c \
 
 INCS := \
@@ -81,6 +99,7 @@ INCS := \
 	"-I$(INC_DIR)" \
 	"-I$(MCUBOOT_DIR)/boot/bootutil/include" \
 	"-I$(MCUBOOT_DIR)/ext/tinycrypt/lib/include" \
+	"-I$(MCUBOOT_DIR)/ext/mbedtls-asn1/include" \
 
 DEFS := \
 	-DNDEBUG \
