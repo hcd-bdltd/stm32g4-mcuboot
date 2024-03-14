@@ -106,6 +106,7 @@ DEFS := \
 	-DSTM32G431xx \
 	-DUSE_FULL_LL_DRIVER \
 	-DUSE_HAL_DRIVER \
+	-DMCUBOOT_LOG_LEVEL=3 \
 
 STD_FLAGS := -std=gnu11
 STD_FLAGS += -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
