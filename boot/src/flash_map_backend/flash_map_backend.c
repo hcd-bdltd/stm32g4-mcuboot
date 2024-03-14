@@ -58,19 +58,60 @@ static const struct flash_area *s_flash_areas[] = {
 	&img0_secondary,
 };
 
-static bool flash_erase(uint32_t sector, uint32_t len)
+static uint32_t prv_get_flash_page(uint32_t addr)
 {
-	return false;
+	return (addr - FLASH_BASE) / FLASH_PAGE_SIZE;
 }
 
-static bool flash_write(uint32_t addr, const void *src, uint32_t len)
+static bool prv_flash_erase(uint32_t addr, uint32_t len)
 {
-	return false;
+	uint32_t first_page = prv_get_flash_page(addr);
+	uint32_t last_page = prv_get_flash_page(addr + len - 1);
+	uint32_t nb_pages = last_page - first_page + 1;
+
+	uint32_t page_error = 0;
+	FLASH_EraseInitTypeDef erase_init = {
+		.TypeErase = FLASH_TYPEERASE_PAGES,
+		.Banks = FLASH_BANK_1,
+		.Page = first_page,
+		.NbPages = nb_pages,
+	};
+
+	HAL_FLASH_Unlock();
+	if (HAL_FLASHEx_Erase(&erase_init, &page_error) != HAL_OK) {
+		BOOT_LOG_ERR("%s: HAL_FLASHEx_Erase failed error: %d", __func__, (int)page_error);
+		HAL_FLASH_Lock();
+		return false;
+	}
+
+	HAL_FLASH_Lock();
+	return true;
 }
 
-static bool flash_read(uint32_t addr, void *dst, uint32_t len)
+static bool prv_flash_write(uint32_t addr, const void *src, uint32_t len)
 {
-	return false;
+	HAL_FLASH_Unlock();
+
+	for (uint32_t i = 0; i < len; i += sizeof(uint64_t)) {
+		uint64_t double_word = 0;
+		memcpy(&double_word, src + i, sizeof(uint64_t));
+		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, addr + i, double_word) !=
+		    HAL_OK) {
+			BOOT_LOG_ERR("%s: HAL_FLASH_Program failed", __func__);
+			HAL_FLASH_Lock();
+			return false;
+		}
+	}
+
+	HAL_FLASH_Lock();
+	return true;
+}
+
+static bool prv_flash_read(uint32_t addr, void *dst, uint32_t len)
+{
+	// Internal flash is memory mapped, so we can just copy the data
+	memcpy(dst, (void *)addr, len);
+	return true;
 }
 
 static const struct flash_area *prv_lookup_flash_area(uint8_t id)
@@ -111,7 +152,9 @@ int flash_area_read(const struct flash_area *fa, uint32_t off, void *dst, uint32
 		return -1;
 	}
 
-	bool success = flash_read(fa->fa_off + off, dst, len);
+	const uint32_t addr = fa->fa_off + off;
+	MCUBOOT_LOG_DBG("%s: Addr: 0x%08x Length: %d", __func__, (int)addr, (int)len);
+	bool success = prv_flash_read(addr, dst, len);
 	if (!success) {
 		BOOT_LOG_ERR("%s: Flash read failed", __func__);
 		return -1;
@@ -133,10 +176,9 @@ int flash_area_write(const struct flash_area *fa, uint32_t off, const void *src,
 		return -1;
 	}
 
-	const uint32_t start_addr = fa->fa_off + off;
-	BOOT_LOG_DBG("%s: Addr: 0x%08x Length: %d", __func__, (int)start_addr, (int)len);
-
-	bool success = flash_write(start_addr, src, len);
+	const uint32_t addr = fa->fa_off + off;
+	MCUBOOT_LOG_DBG("%s: Addr: 0x%08x Length: %d", __func__, (int)addr, (int)len);
+	bool success = prv_flash_write(addr, src, len);
 	if (!success) {
 		BOOT_LOG_ERR("%s: Flash write failed", __func__);
 		return -1;
@@ -157,17 +199,16 @@ int flash_area_erase(const struct flash_area *fa, uint32_t off, uint32_t len)
 		return -1;
 	}
 
-	const uint32_t start_addr = fa->fa_off + off;
-	BOOT_LOG_DBG("%s: Addr: 0x%08x Length: %d", __func__, (int)start_addr, (int)len);
-
-	bool success = flash_erase(start_addr, len);
+	const uint32_t addr = fa->fa_off + off;
+	MCUBOOT_LOG_DBG("%s: Addr: 0x%08x Length: %d", __func__, (int)addr, (int)len);
+	bool success = prv_flash_erase(addr, len);
 	if (!success) {
 		BOOT_LOG_ERR("%s: Flash erase failed", __func__);
 		return -1;
 	}
 
 	for (size_t i = 0; i < len; i++) {
-		uint8_t *val = (void *)(start_addr + i);
+		uint8_t *val = (void *)(addr + i);
 		if (*val != 0xff) {
 			BOOT_LOG_ERR("%s: Erase at 0x%x Failed", __func__, (int)val);
 			assert(0);

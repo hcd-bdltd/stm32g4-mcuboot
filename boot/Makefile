@@ -70,6 +70,9 @@ STM32_SRCS := \
 	$(HAL_DIR)/Src/stm32g4xx_hal.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_cortex.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_exti.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_flash.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_flash_ex.c \
+	$(HAL_DIR)/Src/stm32g4xx_hal_flash_ramfunc.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_gpio.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr.c \
 	$(HAL_DIR)/Src/stm32g4xx_hal_pwr_ex.c \
