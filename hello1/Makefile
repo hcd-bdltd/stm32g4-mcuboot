@@ -17,11 +17,11 @@ OC := $(PREFIX)objcopy
 OUT_DIR := out
 SRC_DIR := src
 INC_DIR := inc
-EXT_DIR := ../ext
+LIB_DIR := ../lib
 
-BSP_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/BSP/STM32G4xx_Nucleo
-CMSIS_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/CMSIS
-HAL_DIR := $(EXT_DIR)/STM32CubeG4/Drivers/STM32G4xx_HAL_Driver
+BSP_DIR := $(LIB_DIR)/STM32CubeG4/Drivers/BSP/STM32G4xx_Nucleo
+CMSIS_DIR := $(LIB_DIR)/STM32CubeG4/Drivers/CMSIS
+HAL_DIR := $(LIB_DIR)/STM32CubeG4/Drivers/STM32G4xx_HAL_Driver
 
 LD_SRCS := $(SRC_DIR)/gcc/STM32G431RBTX_FLASH.ld
 
